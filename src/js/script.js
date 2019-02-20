@@ -1,7 +1,38 @@
 window.addEventListener('DOMContentLoaded', () =>{
 
 
-        const catrWrapper = document.querySelector(".cart__wrapper"),
+        
+
+
+const loadContent = async(url, callback) => {
+    await fetch(url)
+        .then(response => response.json())
+        .then(json => createElement(json.goods));
+    callback();
+}
+function createElement(arr){
+    const goodsWrapper = document.querySelector('.goods__wrapper');
+
+    arr.forEach(function(item){
+        let card = document.createElement('div');
+        card.classList.add('good__item');
+        card.innerHTML = `
+            <img class="goods__img" src="${item.url}" alt="phone">
+            <div class="goods__colors">Доступно цветов: 4</div>
+            <div class="goods__title">
+            ${item.title}
+            </div>
+            <div class="goods__price">
+                <span>${item.price}</span> руб/шт
+            </div>
+            <button class="goods__btn">Добавить в корзину</button>
+        `;
+        goodsWrapper.appendChild(card);
+    });
+}
+
+loadContent('js/db.json', () => {
+    const catrWrapper = document.querySelector(".cart__wrapper"),
             cart = document.querySelector('.cart'),
             close = document.querySelector('.cart__close'),
             open = document.querySelector('#cart'),
@@ -33,7 +64,6 @@ window.addEventListener('DOMContentLoaded', () =>{
                 empty = catrWrapper.querySelector('.empty');
             trigger.remove();
             showConfirm();
-            calcGoods(1);
             removeBtn.classList.add('goods__item-remove');
             removeBtn.innerHTML = '&times';
             item.appendChild(removeBtn);
@@ -42,6 +72,7 @@ window.addEventListener('DOMContentLoaded', () =>{
             if (empty) {
                 empty.style.display = 'none';
             }
+            calcGoods(0);
             calcTotal();
             removeFromCart();
     });
@@ -108,5 +139,12 @@ window.addEventListener('DOMContentLoaded', () =>{
             });
         }
 });
+});
 
-
+// const example = {username: 'Danil'};
+// fetch('https://jsonplaceholder.typicode.com/todos/1',{
+//     method: 'POST',
+//     body: JSON.stringify(example) 
+// })
+//   .then(response => response.json())
+//   .then(json => console.log(json))
